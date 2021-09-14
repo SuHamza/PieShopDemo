@@ -52,4 +52,37 @@
         </nav>
     </footer>
 </body>
+<script>
+    // Load the script on document loading
+    window.addEventListener("DOMContentLoaded", function(e) {
+        // Select all buttons with 'data-order' attribute
+        const orderButtons = document.querySelectorAll("button[data-order]");
+
+        // Loop over each button
+        orderButtons.forEach(function(button) {
+            // Create a click handler for each button
+            button.addEventListener("click", function(e) {
+                const button = e.currentTarget;
+                const container = button.parentNode;
+
+                // Object Literal for order details
+                const order = { 
+                    id: button.getAttribute("data-order"),
+                    title: container.querySelector(".title").innerText,
+                    price: container.querySelector(".price").innerText,
+                    desc: container.querySelector(".desc").innerText
+                };
+
+                // Save order data in Local Storage
+                /* Local Storage can only save strings,
+                must convert 'order' object into a string. */
+                localStorage.setItem("order", JSON.stringify(order));
+
+                const url = window.location.href.replace("pies.html", "order.html");
+                // Set the browser's location to the new URL "orders.html"
+                window.location.href = url;
+            });
+        });
+    });
+</script>
 </html>
