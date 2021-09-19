@@ -7,6 +7,13 @@
     <title>Order | Bethany's Pie Shop</title>
     <link rel="stylesheet" href="site.css" type="text/css">
     <style>
+
+        @media only screen and (min-width: 768px) {
+            article {
+                width: 350px;
+            }
+        }
+
         .input-group {
             margin-bottom: 20px;
 
@@ -64,6 +71,10 @@
                 <p class="desc"></p>
             </div>
             <form action="http://localhost:7071/api/post" method="POST">
+                <!-- Create a hidden field to hold Pie Order & Location datat
+                to send it to the server -->
+                <input type="hidden" id="pie-order" name="pie-order">
+                <input type="hidden" id="location" name="location">
                 <div class="input-group">
                     <div><label for="first-name">First Name</label></div>
                     <div><input type="text" name="first-name" id="first-name" /></div>
@@ -165,4 +176,57 @@
         </nav>
     </footer>
 </body>
+<script>
+    // Run the script upon page loading
+    window.addEventListener("DOMContentLoaded", function(e) {
+
+        let locationBox = document.querySelector("#location");
+
+        let location = {
+            latitude: "unknown",
+            longitude: "unknown"
+        };
+
+        // Prompt user to enter their location
+        // getCurrentPosition has two callbacks: Success & Error states
+        window.navigator.geolocation.getCurrentPosition(
+            function(position) {
+                location = {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                };
+                // Store location data in the locationBox
+                locationBox.value = JSON.stringify(location);
+            },
+            function(error) {
+                locationBox.value = JSON.stringify(location);
+            }
+        );
+        // Retrieve order details from LocalStorage
+        const order = localStorage.getItem("order");
+        // Must check that there's data available
+        if (order) {
+            // Convert 'order' from a String to an Object
+            const pieOrder = JSON.parse(order);
+
+            const orderInput = document.querySelector("#pie-order");
+            orderInput.value = order;
+
+            // Select 'pie' HTML Container
+            const pie = document.querySelector(".pie");
+
+            const title = pie.querySelector(".title");
+            const price = pie.querySelector(".price");
+            const desc = pie.querySelector(".desc");
+
+            title.innerText = pieOrder.title;
+            price.innerText = pieOrder.price;
+            desc.innerText = pieOrder.desc;
+
+            const img = pie.querySelector("img");
+            img.setAttribute("src", `images/${pieOrder.id}.png`)
+            img.setAttribute("alt", pieOrder.title)
+        }
+    });
+</script>
 </html>
